@@ -11,7 +11,7 @@ class PlayerController extends Controller
     {
         return view('index', ['players' => Player::all()]);
     }
-
+    
     public function store(Request $request)
     {
         $player = Player::create(['name' => $request->name, 'dupr' => $request->dupr ?: null]);
