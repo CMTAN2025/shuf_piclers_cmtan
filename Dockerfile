@@ -13,14 +13,14 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY . .
 
-RUN cp .env.example .env
-
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
-
-RUN touch database/database.sqlite
-
-RUN php artisan key:generate --force
-RUN php artisan migrate --force
+RUN cp .env.example .env \
+    && mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache \
+    && composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev \
+    && touch database/database.sqlite \
+    && php artisan key:generate --force \
+    && php artisan config:cache \
+    && php artisan migrate --force
 
 EXPOSE 10000
 
