@@ -115,6 +115,7 @@ class MatchController extends Controller
                 'id'             => $p->id,
                 'name'           => $p->name,
                 'rating'         => (float) $p->rating,
+                'tier'           => RatingService::tier((float) $p->rating),
                 'wins'           => $p->wins,
                 'losses'         => $p->losses,
                 'matches_played' => $p->matches_played,

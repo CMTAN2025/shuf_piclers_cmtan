@@ -102,7 +102,7 @@
         </div>
 
         {{-- Header row --}}
-        <div class="grid gap-2 px-3 pb-2 text-xs font-semibold" style="grid-template-columns:28px 1fr 56px 56px 56px;color:rgba(148,163,184,.4)">
+        <div class="grid gap-2 px-3 pb-2 text-xs font-semibold" style="grid-template-columns:28px 1fr 80px 56px 56px;color:rgba(148,163,184,.4)">
             <span>#</span><span>Player</span><span class="text-center">Rating</span><span class="text-center">W/L</span><span class="text-center">Win%</span>
         </div>
 
@@ -171,12 +171,21 @@ function rankColor(rank) {
     return 'rgba(148,163,184,.4)';
 }
 
+const tierColors = {
+    'Pro':          '#f59e0b',
+    'Elite':        '#a78bfa',
+    'Advanced':     '#10b981',
+    'Intermediate': '#38bdf8',
+    'Beginner':     'rgba(148,163,184,.5)',
+};
+
 function rowHTML(p, maxRating) {
     const barW = maxRating > 0 ? Math.round((p.rating / maxRating) * 100) : 0;
     const ratingColor = p.rank <= 3 ? rankColor(p.rank) : '#38bdf8';
+    const tc = tierColors[p.tier] || '#38bdf8';
     return `<div class="row fade-in rounded-xl px-3 py-3 grid gap-2 items-center"
-                style="grid-template-columns:28px 1fr 56px 56px 56px"
-                onclick="openHist(${p.id}, '${p.name.replace(/'/g,"\\'")}', ${p.rating})">
+                style="grid-template-columns:28px 1fr 80px 56px 56px"
+                onclick="openHist(${p.id}, '${p.name.replace(/'/g,"\\'")}', ${p.rating}, '${p.tier}')">
         <span class="text-xs font-bold" style="color:${rankColor(p.rank)}">${p.rank}</span>
         <div class="min-w-0">
             <p class="text-sm font-semibold text-slate-200 truncate">${p.name}</p>
@@ -184,7 +193,10 @@ function rowHTML(p, maxRating) {
                 <div class="rating-bar" style="width:${barW}%"></div>
             </div>
         </div>
-        <span class="text-center text-xs font-bold" style="color:${ratingColor}">${p.rating.toFixed(2)}</span>
+        <div class="text-center">
+            <span class="text-xs font-bold" style="color:${ratingColor}">${p.rating.toFixed(2)}</span>
+            <span class="block text-xs font-semibold" style="color:${tc};font-size:.55rem;letter-spacing:.06em;text-transform:uppercase">${p.tier}</span>
+        </div>
         <span class="text-center text-xs" style="color:rgba(148,163,184,.6)">${p.wins}/${p.losses}</span>
         <span class="text-center text-xs font-semibold" style="color:${p.win_rate>=50?'#10b981':'rgba(148,163,184,.5)'}">${p.win_rate}%</span>
     </div>`;
@@ -210,9 +222,9 @@ async function loadLeaderboard() {
     list.innerHTML = data.map(p => rowHTML(p, maxRating)).join('');
 }
 
-async function openHist(id, name, rating) {
+async function openHist(id, name, rating, tier) {
     document.getElementById('hist-name').textContent = name;
-    document.getElementById('hist-rating').textContent = `Current rating: ${rating.toFixed(2)}`;
+    document.getElementById('hist-rating').textContent = `${rating.toFixed(2)} · ${tier}`;
     document.getElementById('hist-list').innerHTML = `<p class="text-xs text-center py-4" style="color:rgba(148,163,184,.35)">Loading...</p>`;
 
     const overlay = document.getElementById('hist-overlay');
