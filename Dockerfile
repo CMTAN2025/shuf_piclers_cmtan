@@ -13,11 +13,13 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY . .
 
-RUN cp .env.example .env \
-    && mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache \
+RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache \
     && composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 10000
 
-CMD php artisan key:generate --force && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000
+ENTRYPOINT ["docker-entrypoint.sh"]
