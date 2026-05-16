@@ -4,9 +4,9 @@ WORKDIR /var/www
 
 RUN apt-get update && apt-get install -y \
     unzip zip git curl \
-    libzip-dev libpng-dev libonig-dev libxml2-dev \
+    libzip-dev libxml2-dev libpq-dev \
     && docker-php-ext-install \
-    pdo pdo_pgsql mbstring zip xml \
+    pdo pdo_pgsql zip xml \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
