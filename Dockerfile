@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     unzip zip git curl \
     libzip-dev libpng-dev libonig-dev libxml2-dev \
     && docker-php-ext-install \
-    pdo pdo_mysql mbstring zip xml \
+    pdo pdo_pgsql mbstring zip xml \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -16,11 +16,7 @@ COPY . .
 RUN cp .env.example .env \
     && mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache \
-    && composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev \
-    && touch database/database.sqlite \
-    && php artisan key:generate --force \
-    && php artisan config:cache \
-    && php artisan migrate --force
+    && composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 EXPOSE 10000
 
